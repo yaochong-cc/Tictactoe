@@ -2,17 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 public class GraphicTicTacToe extends JFrame implements ActionListener {
     private JButton[][] buttons;
     private char currentPlayer;
     private char[][] board;
+    private Random random;
 
     public GraphicTicTacToe() {
-        currentPlayer = 'X';
+        currentPlayer = 'X'; // 用户是 X
         board = new char[3][3];
         buttons = new JButton[3][3];
-        
+        random = new Random();
+
         // 设置窗口属性
         this.setTitle("井字棋");
         this.setSize(300, 300);
@@ -62,12 +65,35 @@ public class GraphicTicTacToe extends JFrame implements ActionListener {
                 resetGame();
             } else {
                 switchPlayer();
+                computerMove();  // 计算机移动
+                if (checkWinner()) {
+                    JOptionPane.showMessageDialog(this, "计算机 " + currentPlayer + " 胜利！");
+                    resetGame();
+                } else if (isBoardFull()) {
+                    JOptionPane.showMessageDialog(this, "平局！");
+                    resetGame();
+                } else {
+                    switchPlayer();
+                }
+            }
+        }
+    }
+
+    private void computerMove() {
+        // 随机选择一个空位
+        while (true) {
+            int row = random.nextInt(3);
+            int col = random.nextInt(3);
+            if (board[row][col] == ' ') {
+                board[row][col] = currentPlayer;
+                buttons[row][col].setText(String.valueOf(currentPlayer));
+                break;
             }
         }
     }
 
     private void switchPlayer() {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X'; // 切换玩家
     }
 
     private boolean checkWinner() {
@@ -105,7 +131,7 @@ public class GraphicTicTacToe extends JFrame implements ActionListener {
                 buttons[i][j].setText(" ");
             }
         }
-        currentPlayer = 'X';
+        currentPlayer = 'X'; // 重置为用户 X 开始
     }
 
     public static void main(String[] args) {
